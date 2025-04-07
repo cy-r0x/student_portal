@@ -159,9 +159,11 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.clear();
                       if (context.mounted) {
-                        Navigator.of(context).pushReplacement(
+                        Navigator.pushAndRemoveUntil(
+                          context,
                           MaterialPageRoute(
                               builder: (context) => const Login()),
+                          (route) => false,
                         );
                       }
                     },

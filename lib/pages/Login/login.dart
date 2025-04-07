@@ -194,7 +194,9 @@ class _LoginState extends State<Login> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         TextButton(
-          onPressed: () {/* Add forgot password logic */},
+          onPressed: () {
+            
+          },
           child: Text(
             "Forgot Password?",
             style: TextStyle(
@@ -285,7 +287,7 @@ class _LoginState extends State<Login> {
       final response = await http.post(
         url,
         headers: {
-          'Content-Type': 'application/json', // Set the correct Content-Type
+          'Content-Type': 'application/json',
         },
         body: json.encode({
           'username': username,

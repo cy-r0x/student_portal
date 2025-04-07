@@ -12,7 +12,7 @@ class Spinner extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const CircularProgressIndicator(
-            color: Colors.black, // Black-colored spinner
+            color: Colors.black,
           ),
           if (message != null) ...[
             const SizedBox(height: 16),
@@ -21,7 +21,7 @@ class Spinner extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: Colors.black, // Black-colored text
+                color: Colors.black,
               ),
             ),
           ],

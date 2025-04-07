@@ -9,13 +9,13 @@ Future<Map<String, dynamic>?> getCreditData(String accessToken) async {
     final response = await http.get(
       url,
       headers: {
-        'accesstoken': accessToken, // Use the access token directly
+        'accesstoken': accessToken,
       },
     );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as Map<String, dynamic>;
-      return data; // Return the parsed credit data
+      return data;
     } else {
       return null;
     }

@@ -9,21 +9,19 @@ Future<List<dynamic>?> getClearance(String accessToken) async {
     final response = await http.get(
       url,
       headers: {
-        'accesstoken': accessToken, // Use the access token directly
+        'accesstoken': accessToken,
       },
     );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as List<dynamic>;
-      return data; // Return the parsed credit data
+      return data;
     } else {
-      // Handle non-200 status codes
       print(
           'Error: Failed to fetch credit data. Status code: ${response.statusCode}');
       return null;
     }
   } catch (e) {
-    // Handle network or parsing errors
     print('Error: $e');
     return null;
   }
