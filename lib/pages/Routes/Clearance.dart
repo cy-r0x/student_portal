@@ -41,6 +41,7 @@ class _ClearanceState extends State<Clearance> {
         setState(() {
           data = List<Map<String, dynamic>>.from(
               parsedData.map((item) => Map<String, dynamic>.from(item)));
+          data = data.reversed.toList();
         });
       }
 
@@ -78,6 +79,7 @@ class _ClearanceState extends State<Clearance> {
           // Cache the fetched data
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('cachedClearanceData', json.encode(data));
+          data = data.reversed.toList();
         }
       } else {
         // Handle empty or null data

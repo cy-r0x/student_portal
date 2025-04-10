@@ -23,28 +23,58 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildUserProfile() {
+    // Extract the last word of the name for the avatar
+    final nameParts = name.split(' ');
+    final lastWord = nameParts.isNotEmpty ? nameParts.last : '';
+    final avatarChar = lastWord.isNotEmpty ? lastWord[0].toUpperCase() : '?';
+    
     return SizedBox(
       width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(
         children: [
-          Text(
-            "Welcome",
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+          // Avatar with first character of the last name
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: Colors.white24,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                avatarChar,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
-          Text(
-            name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.2,
-            ),
+          const SizedBox(width: 12),
+          // Name and welcome text
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Welcome",
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.8),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -185,3 +215,4 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+

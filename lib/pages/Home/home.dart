@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
         Dashboard(accessToken: accessToken!),
         Clearance(accessToken: accessToken!),
         Courses(accessToken: accessToken!),
-        const MidQuiz(),
+        MidQuiz(accessToken: accessToken!),
         const Other(),
       ];
     } else {
