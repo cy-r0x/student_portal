@@ -17,3 +17,7 @@ samples, guidance on mobile development, and a full API reference.
 
 ## App Link
 Drive: https://drive.google.com/file/d/1kQ3lztYE21I0ZOLqpALR9dad-onhci5N/view?usp=sharing
+
+
+## Figma Design Link:
+https://www.figma.com/design/EVEqk6aec99Z1EnUjvGoeW/Project-Student-Portal?node-id=15-154&t=W3bWxuyg3LGltiZi-1
