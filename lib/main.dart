@@ -3,9 +3,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student_portal/common/FColors.dart';
 import './pages/Login/login.dart';
 import './pages/Home/home.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
+import 'package:flutter/services.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Enable high refresh rate on Android
+  try {
+    await FlutterDisplayMode.setHighRefreshRate();
+    // Optional: Print available display modes
+    final List<DisplayMode> supportedModes = await FlutterDisplayMode.supported;
+    final DisplayMode activeMode = await FlutterDisplayMode.active;
+    
+    print('Supported display modes:');
+    supportedModes.forEach(print);
+    print('Active display mode: $activeMode');
+  } on PlatformException catch (e) {
+  }
+  
+  // Disable unnecessary animations and effects that might cause rendering issues
+  // debugDisableShadows = true;
+  
   runApp(MyApp());
 }
 
@@ -66,6 +85,17 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.white,
         primaryColor: FColors.primary,
+        // Removed invalid imageTheme parameter
+        // Simplify page transitions to avoid rendering issues
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
+            TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+          },
+        ),
       ),
       home: FutureBuilder<bool>(
         future: _initializeApp(),

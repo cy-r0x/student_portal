@@ -1,0 +1,2 @@
+/home/cyr0x/Desktop/student_portal/android/app/.cxx/RelWithDebInfo/462k20d5/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/cyr0x/Desktop/student_portal/android/app/.cxx/RelWithDebInfo/462k20d5/armeabi-v7a/CMakeFiles/rebuild_cache.dir

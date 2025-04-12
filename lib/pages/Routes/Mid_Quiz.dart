@@ -256,11 +256,6 @@ class _MidQuiz extends State<MidQuiz> {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  // Calculate the total score if needed
-                  final double mid1 = double.tryParse(result['mid1']?.toString() ?? '0') ?? 0;
-                  final double mid2 = double.tryParse(result['mid2']?.toString() ?? '0') ?? 0;
-                  final double quiz = double.tryParse(result['quiz']?.toString() ?? '0') ?? 0;
-                  final double attendance = double.tryParse(result['att']?.toString() ?? '0') ?? 0;
                   
                   return Dialog(
                     shape: RoundedRectangleBorder(

@@ -31,7 +31,6 @@ class AmountCard extends StatefulWidget {
 
 class _AmountCardState extends State<AmountCard> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -41,12 +40,6 @@ class _AmountCardState extends State<AmountCard> with SingleTickerProviderStateM
       duration: const Duration(seconds: 10),
     );
     
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
     
     _animationController.repeat(reverse: true);
   }
@@ -65,7 +58,7 @@ class _AmountCardState extends State<AmountCard> with SingleTickerProviderStateM
         .toColor();
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         boxShadow: [

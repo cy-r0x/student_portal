@@ -1,0 +1,1 @@
+/home/cyr0x/Desktop/student_portal/build/app/intermediates/cxx/RelWithDebInfo/462k20d5/obj/x86

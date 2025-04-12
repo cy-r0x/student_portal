@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Home/home.dart';
+import 'Result.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,45 +14,101 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
 
+  TabController? _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFFF8F9FA), Color(0xFFE9ECEF)],
-            ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Text('Student Portal', 
+          style: TextStyle(
+            color: Colors.black.withOpacity(0.8),
+            fontWeight: FontWeight.bold
+          )
+        ),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.black,
+          tabs: const [
+            Tab(text: 'Login'),
+            Tab(text: 'Result'),
+          ],
+          labelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
           ),
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildHeader(),
-                      const SizedBox(height: 40),
-                      _buildLoginForm(),
-                      const SizedBox(height: 24),
-                      _buildLoginButton(),
-                      const SizedBox(height: 20),
-                      _buildFooterLinks(),
-                    ],
-                  ),
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.black54,
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildLoginView(),
+          const ResultTab(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoginView() {
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              Colors.grey[50]!,
+              Colors.grey[100]!,
+            ],
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              padding: const EdgeInsets.all(28),
+              constraints: const BoxConstraints(maxWidth: 380),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildHeader(),
+                    const SizedBox(height: 36),
+                    Divider(color: Colors.black.withOpacity(0.1), height: 1),
+                    const SizedBox(height: 36),
+                    _buildLoginForm(),
+                    const SizedBox(height: 36),
+                    _buildLoginButton(),
+                    const SizedBox(height: 20),
+                    _buildFooterLinks(),
+                  ],
                 ),
               ),
             ),
@@ -63,15 +121,22 @@ class _LoginState extends State<Login> {
   Widget _buildHeader() {
     return Column(
       children: [
-        Image.asset("assets/images/logo.png", width: 120),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Image.asset("assets/images/logo.png", width: 80),
+        ),
         const SizedBox(height: 24),
         Text(
           "Welcome Back!",
           style: TextStyle(
             fontSize: 28,
-            fontWeight: FontWeight.w800,
-            color: Colors.grey[800],
-            letterSpacing: -0.5,
+            fontWeight: FontWeight.bold,
+            color: Colors.black.withOpacity(0.8),
+            letterSpacing: 0.5,
           ),
         ),
         const SizedBox(height: 8),
@@ -79,7 +144,7 @@ class _LoginState extends State<Login> {
           "Please sign in to continue",
           style: TextStyle(
             fontSize: 16,
-            color: Colors.grey[600],
+            color: Colors.black.withOpacity(0.5),
           ),
         ),
       ],
@@ -99,7 +164,7 @@ class _LoginState extends State<Login> {
             validator: (value) =>
                 value?.isEmpty ?? true ? 'ID is required' : null,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           _buildInputField(
             controller: _passwordController,
             label: "Password",
@@ -110,7 +175,7 @@ class _LoginState extends State<Login> {
             suffixIcon: IconButton(
               icon: Icon(
                 _obscurePassword ? Iconsax.eye : Iconsax.eye_slash,
-                color: Colors.grey[600],
+                color: Colors.black.withOpacity(0.6),
               ),
               onPressed: () =>
                   setState(() => _obscurePassword = !_obscurePassword),
@@ -139,18 +204,29 @@ class _LoginState extends State<Login> {
       autofillHints: autofillHints,
       textInputAction: textInputAction,
       validator: validator,
+      style: TextStyle(color: Colors.black.withOpacity(0.8), fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Colors.grey[600]),
+        labelStyle: TextStyle(color: Colors.black.withOpacity(0.6)),
+        prefixIcon: Icon(icon, color: Colors.black.withOpacity(0.6)),
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Colors.blueAccent),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.black.withOpacity(0.5), width: 1.5),
         ),
+        filled: true,
+        fillColor: Colors.black.withOpacity(0.02),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       ),
+      cursorColor: Colors.black,
     );
   }
 
@@ -160,16 +236,16 @@ class _LoginState extends State<Login> {
       child: ElevatedButton(
         onPressed: _isLoading ? null : _handleLogin,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF2563EB),
+          backgroundColor: Colors.black.withOpacity(0.7),
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 18),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
-          elevation: 2,
+          elevation: 0,
         ),
         child: _isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
@@ -177,35 +253,40 @@ class _LoginState extends State<Login> {
                   color: Colors.white,
                 ),
               )
-            : const Text(
-                "Sign In",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
-                ),
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Iconsax.login, size: 22),
+                  const SizedBox(width: 12),
+                  const Text(
+                    "Sign In",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ],
               ),
       ),
     );
   }
 
   Widget _buildFooterLinks() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TextButton(
-          onPressed: () {
-            
-          },
-          child: Text(
-            "Forgot Password?",
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+    return TextButton(
+      onPressed: () {
+        
+      },
+      style: TextButton.styleFrom(
+        foregroundColor: Colors.black.withOpacity(0.5),
+      ),
+      child: const Text(
+        "Forgot Password?",
+        style: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 15,
         ),
-      ],
+      ),
     );
   }
 
