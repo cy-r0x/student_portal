@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future<List<Map<String, dynamic>>?> fetchSGPA(String accessToken) async {
-  const url = 'http://203.190.10.22:8006/dashboard/studentSGPAGraph';
+  const url = 'http://203.190.10.22:8189/dashboard/studentSGPAGraph';
 
   try {
     final response = await http.get(

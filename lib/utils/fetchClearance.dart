@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 Future<List<dynamic>?> getClearance(String accessToken) async {
   final url =
-      Uri.parse('http://203.190.10.22:8006/accounts/semester-exam-clearance');
+      Uri.parse('http://203.190.10.22:8189/accounts/semester-exam-clearance');
 
   try {
     final response = await http.get(

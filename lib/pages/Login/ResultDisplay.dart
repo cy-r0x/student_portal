@@ -7,11 +7,13 @@ import 'package:student_portal/widget/loadingDuck.dart';
 class ResultDisplay extends StatefulWidget {
   final String semesterId;
   final String studentId;
+  final List<dynamic>? resultData; // Add parameter for passed result data
 
   const ResultDisplay({
     Key? key,
     required this.semesterId,
     required this.studentId,
+    this.resultData, // Make it optional to maintain backward compatibility
   }) : super(key: key);
 
   @override
@@ -23,7 +25,7 @@ class _ResultDisplayState extends State<ResultDisplay> {
   bool _hasError = false;
   String _errorMessage = '';
   List<dynamic> _resultData = [];
-  
+
   // Summary data
   double _cgpa = 0.0;
   double _totalCredits = 0.0;
@@ -34,40 +36,50 @@ class _ResultDisplayState extends State<ResultDisplay> {
   @override
   void initState() {
     super.initState();
-    _fetchResult();
+    if (widget.resultData != null) {
+      // Use the provided data if available
+      _processResultData(widget.resultData!);
+    } else {
+      // Fall back to fetching if no data was provided
+      _fetchResult();
+    }
+  }
+
+  // Process the result data whether it comes from props or API call
+  void _processResultData(List<dynamic> data) {
+    // Calculate total credits and grade points
+    double totalCredits = 0.0;
+    double totalGradePoints = 0.0;
+
+    for (var course in data) {
+      totalCredits += double.parse(course['totalCredit'].toString());
+      totalGradePoints += double.parse(course['totalCredit'].toString()) *
+          double.parse(course['pointEquivalent'].toString());
+    }
+
+    setState(() {
+      _resultData = data;
+      _isLoading = false;
+      _cgpa = double.parse(data[0]['cgpa'].toString());
+      _totalCredits = totalCredits;
+      _totalGradePoints = totalGradePoints;
+      _semesterName = data[0]['semesterName'];
+      _semesterYear = data[0]['semesterYear'];
+    });
   }
 
   Future<void> _fetchResult() async {
     try {
       final response = await http.get(
         Uri.parse(
-          'http://software.diu.edu.bd:8006/result?grecaptcha=&semesterId=${widget.semesterId}&studentId=${widget.studentId}'
-        ),
+            'http://203.190.10.22:8189/result?grecaptcha=&semesterId=${widget.semesterId}&studentId=${widget.studentId}'),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        
+
         if (data != null && data.isNotEmpty) {
-          // Calculate total credits and grade points
-          double totalCredits = 0.0;
-          double totalGradePoints = 0.0;
-          
-          for (var course in data) {
-            totalCredits += double.parse(course['totalCredit'].toString());
-            totalGradePoints += double.parse(course['totalCredit'].toString()) * 
-                               double.parse(course['pointEquivalent'].toString());
-          }
-          
-          setState(() {
-            _resultData = data;
-            _isLoading = false;
-            _cgpa = double.parse(data[0]['cgpa'].toString());
-            _totalCredits = totalCredits;
-            _totalGradePoints = totalGradePoints;
-            _semesterName = data[0]['semesterName'];
-            _semesterYear = data[0]['semesterYear'];
-          });
+          _processResultData(data);
         } else {
           setState(() {
             _isLoading = false;
@@ -79,7 +91,8 @@ class _ResultDisplayState extends State<ResultDisplay> {
         setState(() {
           _isLoading = false;
           _hasError = true;
-          _errorMessage = 'Failed to load results. Error ${response.statusCode}.';
+          _errorMessage =
+              'Failed to load results. Error ${response.statusCode}.';
         });
       }
     } catch (e) {
@@ -95,7 +108,8 @@ class _ResultDisplayState extends State<ResultDisplay> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Semester Results', style: TextStyle(color: Colors.black87)),
+        title: const Text('Semester Results',
+            style: TextStyle(color: Colors.black87)),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -170,7 +184,8 @@ class _ResultDisplayState extends State<ResultDisplay> {
               backgroundColor: Colors.black87,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
           ),
           const SizedBox(height: 16),
@@ -260,7 +275,8 @@ class _ResultDisplayState extends State<ResultDisplay> {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -382,21 +398,21 @@ class _ResultDisplayState extends State<ResultDisplay> {
             children: [
               Expanded(
                 child: _buildSummaryItem(
-                  "Semester GPA", 
+                  "Semester GPA",
                   semesterGPA.toStringAsFixed(2),
                   Iconsax.chart,
                 ),
               ),
               Expanded(
                 child: _buildSummaryItem(
-                  "Total Credits", 
+                  "Total Credits",
                   _totalCredits.toStringAsFixed(1),
                   Iconsax.book_1,
                 ),
               ),
               Expanded(
                 child: _buildSummaryItem(
-                  "Courses", 
+                  "Courses",
                   _resultData.length.toString(),
                   Iconsax.document_text,
                 ),
@@ -471,7 +487,8 @@ class _ResultDisplayState extends State<ResultDisplay> {
   }
 
   Widget _buildCourseCard(Map<String, dynamic> course) {
-    final double pointEquivalent = double.parse(course['pointEquivalent'].toString());
+    final double pointEquivalent =
+        double.parse(course['pointEquivalent'].toString());
     final String gradeLetter = course['gradeLetter'];
     final double totalCredit = double.parse(course['totalCredit'].toString());
     final String courseTitle = course['courseTitle'];

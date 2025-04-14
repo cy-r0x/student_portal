@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-Future<Map<String, dynamic>?> fetchResult(String accessToken, int courseID) async {
-  final url =
-      Uri.parse('http://203.190.10.22:8006/liveResult?courseSectionId=$courseID');
+Future<Map<String, dynamic>?> fetchResult(
+    String accessToken, int courseID) async {
+  final url = Uri.parse(
+      'http://203.190.10.22:8189/liveResult?courseSectionId=$courseID');
 
   try {
     final response = await http.get(
@@ -24,6 +25,4 @@ Future<Map<String, dynamic>?> fetchResult(String accessToken, int courseID) asyn
   }
 }
 
-
-
-  // final url = 'http://software.diu.edu.bd:8006/liveResult?courseSectionId=$courseID';
+// final url = 'http://software.diu.edu.bd:8006/liveResult?courseSectionId=$courseID';

@@ -3,7 +3,7 @@ import 'dart:convert';
 
 Future<List<Map<String, dynamic>>?> fetchCourse(
     String accessToken, String semID) async {
-  final url = 'http://203.190.10.22:8006/registeredCourse?semesterId=$semID';
+  final url = 'http://203.190.10.22:8189/registeredCourse?semesterId=$semID';
 
   try {
     final response = await http.get(

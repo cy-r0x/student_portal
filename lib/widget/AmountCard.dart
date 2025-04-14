@@ -29,7 +29,8 @@ class AmountCard extends StatefulWidget {
   State<AmountCard> createState() => _AmountCardState();
 }
 
-class _AmountCardState extends State<AmountCard> with SingleTickerProviderStateMixin {
+class _AmountCardState extends State<AmountCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
   @override
@@ -39,8 +40,7 @@ class _AmountCardState extends State<AmountCard> with SingleTickerProviderStateM
       vsync: this,
       duration: const Duration(seconds: 10),
     );
-    
-    
+
     _animationController.repeat(reverse: true);
   }
 
@@ -54,7 +54,8 @@ class _AmountCardState extends State<AmountCard> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     // Generate a slightly darker shade for gradient
     final Color darkerShade = HSLColor.fromColor(widget.bgColor)
-        .withLightness(math.max(0.0, HSLColor.fromColor(widget.bgColor).lightness - 0.15))
+        .withLightness(
+            math.max(0.0, HSLColor.fromColor(widget.bgColor).lightness - 0.15))
         .toColor();
 
     return Container(
@@ -179,7 +180,8 @@ class _AmountCardState extends State<AmountCard> with SingleTickerProviderStateM
                             widget.isRefreshing
                                 ? Shimmer.fromColors(
                                     baseColor: Colors.white.withOpacity(0.4),
-                                    highlightColor: Colors.white.withOpacity(0.8),
+                                    highlightColor:
+                                        Colors.white.withOpacity(0.8),
                                     child: Container(
                                       width: 220,
                                       height: 40,
@@ -192,7 +194,8 @@ class _AmountCardState extends State<AmountCard> with SingleTickerProviderStateM
                                 : TweenAnimationBuilder<double>(
                                     duration: const Duration(milliseconds: 800),
                                     curve: Curves.easeOutCubic,
-                                    tween: Tween(begin: 0.0, end: widget.amountCredit),
+                                    tween: Tween(
+                                        begin: 0.0, end: widget.amountCredit),
                                     builder: (context, value, child) {
                                       return Text(
                                         formatCurrency(value),
@@ -237,4 +240,3 @@ class _AmountCardState extends State<AmountCard> with SingleTickerProviderStateM
     );
   }
 }
-

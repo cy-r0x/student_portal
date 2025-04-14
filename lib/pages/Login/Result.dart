@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:student_portal/widget/loadingDuck.dart';
 import 'package:student_portal/utils/fetchFinalResult.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'ResultDisplay.dart';
 
 class ResultTab extends StatefulWidget {
@@ -15,20 +16,18 @@ class ResultTab extends StatefulWidget {
 class _ResultTabState extends State<ResultTab> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _idController = TextEditingController();
-  
+
   String? _selectedYear;
   String? _selectedSemester;
   bool _isSubmitting = false;
 
   // Generate years from current year (2025) down to 2018
-  final List<String> _years = List.generate(
-    8, 
-    (index) => (2025 - index).toString()
-  );
-  
+  final List<String> _years =
+      List.generate(8, (index) => (2025 - index).toString());
+
   // Semesters without Winter
   final List<String> _semesters = ['Spring', 'Summer', 'Fall'];
-  
+
   // Map semesters to their numeric codes
   final Map<String, int> _semesterCodes = {
     'Spring': 1,
@@ -51,33 +50,34 @@ class _ResultTabState extends State<ResultTab> {
         _isSubmitting = true;
         _isCancelled = false;
       });
-      
+
       // Get the last two digits of the year and the semester code
       final yearCode = int.parse(_selectedYear!) % 100;
       final semesterCode = _semesterCodes[_selectedSemester!];
       final semesterId = '$yearCode$semesterCode';
       final studentId = _idController.text.trim();
-      
+
       try {
         // Make the actual API call using fetchFinalResult
         final result = await fetchFinalResult(semesterId, studentId);
-        
+
         // Check if the operation was cancelled
         if (_isCancelled) {
           return;
         }
-        
+
         if (mounted) {
           setState(() => _isSubmitting = false);
-          
+
           if (result != null) {
-            // Navigate to ResultDisplay page with semesterId and studentId
+            // Navigate to ResultDisplay page with the result data
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ResultDisplay(
                   semesterId: semesterId,
                   studentId: studentId,
+                  resultData: result, // Pass the already fetched data
                 ),
               ),
             );
@@ -123,7 +123,7 @@ class _ResultTabState extends State<ResultTab> {
       _isCancelled = true;
       _isSubmitting = false;
     });
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -148,21 +148,25 @@ class _ResultTabState extends State<ResultTab> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Colors.grey[50]!,
-              Colors.grey[100]!,
-            ],
+      child: Column(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white,
+                    Colors.grey[50]!,
+                    Colors.grey[100]!,
+                  ],
+                ),
+              ),
+              child: _isSubmitting ? _buildLoadingView() : _buildFormView(),
+            ),
           ),
-        ),
-        child: _isSubmitting
-            ? _buildLoadingView()
-            : _buildFormView(),
+        ],
       ),
     );
   }
@@ -174,9 +178,9 @@ class _ResultTabState extends State<ResultTab> {
         children: [
           // Duck loading animation
           const Loading(),
-          
+
           const SizedBox(height: 24),
-          
+
           Text(
             "Fetching Results...",
             style: TextStyle(
@@ -185,9 +189,9 @@ class _ResultTabState extends State<ResultTab> {
               color: Colors.black.withOpacity(0.7),
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Cancel button
           ElevatedButton.icon(
             onPressed: _cancelSubmission,
@@ -267,11 +271,11 @@ class _ResultTabState extends State<ResultTab> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 36),
                 Divider(color: Colors.black.withOpacity(0.1), height: 1),
                 const SizedBox(height: 36),
-                
+
                 // Year dropdown
                 _buildDropdownField(
                   label: 'Select Year',
@@ -286,7 +290,7 @@ class _ResultTabState extends State<ResultTab> {
                   scrollable: true,
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Semester dropdown
                 _buildDropdownField(
                   label: 'Select Semester',
@@ -301,7 +305,7 @@ class _ResultTabState extends State<ResultTab> {
                   scrollable: false,
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Student ID field
                 _buildInputField(
                   controller: _idController,
@@ -310,7 +314,7 @@ class _ResultTabState extends State<ResultTab> {
                   tooltip: "Enter your student ID number",
                 ),
                 const SizedBox(height: 36),
-                
+
                 // Submit button
                 SizedBox(
                   width: double.infinity,
@@ -369,19 +373,23 @@ class _ResultTabState extends State<ResultTab> {
           prefixIcon: Icon(icon, color: Colors.black.withOpacity(0.6)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
+            borderSide:
+                BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
+            borderSide:
+                BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.black.withOpacity(0.5), width: 1.5),
+            borderSide:
+                BorderSide(color: Colors.black.withOpacity(0.5), width: 1.5),
           ),
           filled: true,
           fillColor: Colors.black.withOpacity(0.02),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         ),
         value: value,
         isExpanded: true,
@@ -391,7 +399,8 @@ class _ResultTabState extends State<ResultTab> {
         items: items.map<DropdownMenuItem<String>>((String item) {
           return DropdownMenuItem<String>(
             value: item,
-            child: Text(item, style: TextStyle(color: Colors.black.withOpacity(0.8))),
+            child: Text(item,
+                style: TextStyle(color: Colors.black.withOpacity(0.8))),
           );
         }).toList(),
         onChanged: onChanged,
@@ -400,7 +409,7 @@ class _ResultTabState extends State<ResultTab> {
       ),
     );
   }
-  
+
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
@@ -418,23 +427,26 @@ class _ResultTabState extends State<ResultTab> {
           prefixIcon: Icon(icon, color: Colors.black.withOpacity(0.6)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
+            borderSide:
+                BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
+            borderSide:
+                BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.black.withOpacity(0.5), width: 1.5),
+            borderSide:
+                BorderSide(color: Colors.black.withOpacity(0.5), width: 1.5),
           ),
           filled: true,
           fillColor: Colors.black.withOpacity(0.02),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         ),
-        validator: (value) => value == null || value.isEmpty
-            ? 'Please enter your ID'
-            : null,
+        validator: (value) =>
+            value == null || value.isEmpty ? 'Please enter your ID' : null,
         cursorColor: Colors.black,
       ),
     );

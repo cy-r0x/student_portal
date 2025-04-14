@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future<List<Map<String, dynamic>>?> fetchSem(String accessToken) async {
-  const url = 'http://203.190.10.22:8006/registeredCourse/semesterList';
+  const url = 'http://203.190.10.22:8189/registeredCourse/semesterList';
 
   try {
     final response = await http.get(

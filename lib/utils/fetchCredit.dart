@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 Future<Map<String, dynamic>?> getCreditData(String accessToken) async {
   final url =
-      Uri.parse('http://203.190.10.22:8006/paymentLedger/paymentLedgerSummery');
+      Uri.parse('http://203.190.10.22:8189/paymentLedger/paymentLedgerSummery');
 
   try {
     final response = await http.get(

@@ -8,23 +8,18 @@ import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Enable high refresh rate on Android
-  try {
-    await FlutterDisplayMode.setHighRefreshRate();
-    // Optional: Print available display modes
-    final List<DisplayMode> supportedModes = await FlutterDisplayMode.supported;
-    final DisplayMode activeMode = await FlutterDisplayMode.active;
-    
-    print('Supported display modes:');
-    supportedModes.forEach(print);
-    print('Active display mode: $activeMode');
-  } on PlatformException catch (e) {
-  }
-  
+  // try {
+  //   await FlutterDisplayMode.setHighRefreshRate();
+  //   // ignore: empty_catches, unused_catch_clause
+  // } on PlatformException catch (e) {
+  //   //Empty!
+  // }
+
   // Disable unnecessary animations and effects that might cause rendering issues
   // debugDisableShadows = true;
-  
+
   runApp(MyApp());
 }
 

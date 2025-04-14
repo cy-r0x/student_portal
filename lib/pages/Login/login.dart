@@ -4,8 +4,10 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Home/home.dart';
 import 'Result.dart';
+import '../../utils/fetchLogin.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -42,12 +44,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text('Student Portal', 
-          style: TextStyle(
-            color: Colors.black.withOpacity(0.8),
-            fontWeight: FontWeight.bold
-          )
-        ),
+        title: Text('Student Portal',
+            style: TextStyle(
+                color: Colors.black.withOpacity(0.8),
+                fontWeight: FontWeight.bold)),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.black,
@@ -63,11 +63,18 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           unselectedLabelColor: Colors.black54,
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          _buildLoginView(),
-          const ResultTab(),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildLoginView(),
+                const ResultTab(),
+              ],
+            ),
+          ),
+          _buildFooterVersion(),
         ],
       ),
     );
@@ -107,7 +114,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     const SizedBox(height: 36),
                     _buildLoginButton(),
                     const SizedBox(height: 20),
-                    _buildFooterLinks(),
+                    _buildPasswordLink(),
                   ],
                 ),
               ),
@@ -212,19 +219,23 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
+          borderSide:
+              BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
+          borderSide:
+              BorderSide(color: Colors.black.withOpacity(0.2), width: 1.0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.black.withOpacity(0.5), width: 1.5),
+          borderSide:
+              BorderSide(color: Colors.black.withOpacity(0.5), width: 1.5),
         ),
         filled: true,
         fillColor: Colors.black.withOpacity(0.02),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       ),
       cursorColor: Colors.black,
     );
@@ -272,11 +283,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildFooterLinks() {
+  Widget _buildPasswordLink() {
     return TextButton(
-      onPressed: () {
-        
-      },
+      onPressed: () {},
       style: TextButton.styleFrom(
         foregroundColor: Colors.black.withOpacity(0.5),
       ),
@@ -286,6 +295,48 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           fontWeight: FontWeight.w500,
           fontSize: 15,
         ),
+      ),
+    );
+  }
+
+  Widget _buildFooterVersion() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      color: Colors.grey[100],
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Version 1.0.0b | ",
+            style: TextStyle(
+              color: Colors.black.withOpacity(0.6),
+              fontSize: 12,
+            ),
+          ),
+          Text(
+            "Developed by ",
+            style: TextStyle(
+              color: Colors.black.withOpacity(0.6),
+              fontSize: 12,
+            ),
+          ),
+          GestureDetector(
+            onTap: () async {
+              final Uri url = Uri.parse('https://github.com/cyr0x');
+              if (!await launchUrl(url)) {
+                throw Exception('Could not launch $url');
+              }
+            },
+            child: Text(
+              "cyr0x",
+              style: TextStyle(
+                color: Colors.blue[700],
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -313,8 +364,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         return;
       }
 
-      // Call the login API
-      final response = await _loginApi(username, password);
+      // Call the login API using the utility function
+      final response = await fetchLogin(username, password);
 
       if (response != null && response['message'] == 'success') {
         // Store accessToken in SharedPreferences
@@ -357,36 +408,6 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       if (mounted) {
         setState(() => _isLoading = false);
       }
-    }
-  }
-
-  Future<Map<String, dynamic>?> _loginApi(
-      String username, String password) async {
-    final url = Uri.parse('http://203.190.10.22:8006/login');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'username': username,
-          'password': password,
-          'grecaptcha': '',
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        return json.decode(response.body); // Parse the response body
-      } else {
-        // Handle API error
-        return null;
-      }
-    } catch (e) {
-      // Handle network or parsing errors
-      print('Error: $e');
-      return null;
     }
   }
 }
