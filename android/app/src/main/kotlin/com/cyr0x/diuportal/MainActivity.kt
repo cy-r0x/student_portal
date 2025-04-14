@@ -1,4 +1,4 @@
-package com.example.student_portal
+package com.cyr0x.diuportal
 
 import io.flutter.embedding.android.FlutterActivity
 

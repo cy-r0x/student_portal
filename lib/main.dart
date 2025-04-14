@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student_portal/common/FColors.dart';
-import 'package:student_portal/pages/Login/Result.dart';
 import './pages/Login/login.dart';
 import './pages/Home/home.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
@@ -10,12 +9,12 @@ import 'package:flutter/services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // try {
-  //   await FlutterDisplayMode.setHighRefreshRate();
-  //   // ignore: empty_catches, unused_catch_clause
-  // } on PlatformException catch (e) {
-  //   //Empty!
-  // }
+  try {
+    await FlutterDisplayMode.setHighRefreshRate();
+    // ignore: empty_catches, unused_catch_clause
+  } on PlatformException catch (e) {
+    //Empty!
+  }
 
   // Disable unnecessary animations and effects that might cause rendering issues
   // debugDisableShadows = true;
