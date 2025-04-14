@@ -322,7 +322,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           ),
           GestureDetector(
             onTap: () async {
-              final Uri url = Uri.parse('https://github.com/cyr0x');
+              final Uri url = Uri.parse('https://www.facebook.com/cyr0xx');
               if (!await launchUrl(url)) {
                 throw Exception('Could not launch $url');
               }

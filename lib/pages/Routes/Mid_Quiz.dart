@@ -256,7 +256,6 @@ class _MidQuiz extends State<MidQuiz> {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  
                   return Dialog(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -279,7 +278,7 @@ class _MidQuiz extends State<MidQuiz> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(
-                                  Icons.analytics_outlined, 
+                                  Icons.analytics_outlined,
                                   color: Colors.black,
                                 ),
                               ),
@@ -300,9 +299,9 @@ class _MidQuiz extends State<MidQuiz> {
                               ),
                             ],
                           ),
-                          
+
                           Divider(height: 24, thickness: 1),
-                          
+
                           // Results content
                           Container(
                             padding: EdgeInsets.all(12),
@@ -330,9 +329,10 @@ class _MidQuiz extends State<MidQuiz> {
                                   ),
                                 ),
                                 SizedBox(height: 8),
-                                _buildResultRow('Midterm', result['mid1']?.toString() ?? 'N/A'),                                
+                                _buildResultRow('Midterm',
+                                    result['mid1']?.toString() ?? 'N/A'),
                                 SizedBox(height: 16),
-                                
+
                                 // Quiz section
                                 Container(
                                   width: double.infinity,
@@ -344,19 +344,24 @@ class _MidQuiz extends State<MidQuiz> {
                                   child: Text(
                                     "Quizzes",
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green[700],
+                                      fontSize: 14,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
                                 SizedBox(height: 8),
-                                _buildResultRow('Quiz Total', result['quiz']?.toString() ?? 'N/A'),
-                                _buildResultRow('Quiz 1', result['q1']?.toString() ?? 'N/A'),
-                                _buildResultRow('Quiz 2', result['q2']?.toString() ?? 'N/A'),
-                                _buildResultRow('Quiz 3', result['q3']?.toString() ?? 'N/A'),
-                                
+                                _buildResultRow('Quiz Total',
+                                    result['quiz']?.toString() ?? 'N/A'),
+                                _buildResultRow('Quiz 1',
+                                    result['q1']?.toString() ?? 'N/A'),
+                                _buildResultRow('Quiz 2',
+                                    result['q2']?.toString() ?? 'N/A'),
+                                _buildResultRow('Quiz 3',
+                                    result['q3']?.toString() ?? 'N/A'),
+
                                 SizedBox(height: 16),
-                                
+
                                 // Attendance section
                                 Container(
                                   width: double.infinity,
@@ -375,7 +380,8 @@ class _MidQuiz extends State<MidQuiz> {
                                 ),
                                 SizedBox(height: 8),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Attendance',
@@ -390,14 +396,18 @@ class _MidQuiz extends State<MidQuiz> {
                                       height: 35,
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
-                                          colors: [Colors.orange[300]!, Colors.orange[500]!],
+                                          colors: [
+                                            Colors.orange[300]!,
+                                            Colors.orange[500]!
+                                          ],
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,
                                         ),
                                         borderRadius: BorderRadius.circular(8),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.orange.withOpacity(0.3),
+                                            color:
+                                                Colors.orange.withOpacity(0.3),
                                             blurRadius: 4,
                                             offset: Offset(0, 2),
                                           ),
@@ -537,4 +547,3 @@ class _MidQuiz extends State<MidQuiz> {
     );
   }
 }
-

@@ -31,22 +31,47 @@ class AmountCard extends StatefulWidget {
 
 class _AmountCardState extends State<AmountCard>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
+  late AnimationController _counterAnimationController;
+  late Animation<double> _counterAnimation;
+  double _previousAmount = 0;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+    _counterAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(milliseconds: 1500),
     );
+    _counterAnimation = Tween<double>(
+      begin: 0,
+      end: widget.amountCredit,
+    ).animate(CurvedAnimation(
+      parent: _counterAnimationController,
+      curve: Curves.easeOutCubic,
+    ));
+    _counterAnimationController.forward();
+  }
 
-    _animationController.repeat(reverse: true);
+  @override
+  void didUpdateWidget(AmountCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.amountCredit != widget.amountCredit && !widget.isRefreshing) {
+      _previousAmount = oldWidget.amountCredit;
+      _counterAnimation = Tween<double>(
+        begin: _previousAmount,
+        end: widget.amountCredit,
+      ).animate(CurvedAnimation(
+        parent: _counterAnimationController,
+        curve: Curves.easeOutCubic,
+      ));
+      _counterAnimationController.reset();
+      _counterAnimationController.forward();
+    }
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _counterAnimationController.dispose();
     super.dispose();
   }
 
@@ -96,51 +121,35 @@ class _AmountCardState extends State<AmountCard>
             ),
             child: Stack(
               children: [
-                // Animated background patterns
+                // Static background patterns
                 Positioned(
                   right: -40,
                   bottom: -40,
-                  child: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      return Transform.scale(
-                        scale: 1.0 + 0.1 * _animationController.value,
-                        child: Opacity(
-                          opacity: 0.15,
-                          child: Container(
-                            height: 160,
-                            width: 160,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                  child: Opacity(
+                    opacity: 0.15,
+                    child: Container(
+                      height: 160,
+                      width: 160,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
                   ),
                 ),
                 Positioned(
                   left: -20,
                   top: -20,
-                  child: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      return Transform.scale(
-                        scale: 1.0 + 0.15 * _animationController.value,
-                        child: Opacity(
-                          opacity: 0.1,
-                          child: Container(
-                            height: 120,
-                            width: 120,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                  child: Opacity(
+                    opacity: 0.1,
+                    child: Container(
+                      height: 120,
+                      width: 120,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
                   ),
                 ),
                 // Content
@@ -176,7 +185,7 @@ class _AmountCardState extends State<AmountCard>
                               ],
                             ),
                             const SizedBox(height: 16),
-                            // Amount
+                            // Amount with counting animation
                             widget.isRefreshing
                                 ? Shimmer.fromColors(
                                     baseColor: Colors.white.withOpacity(0.4),
@@ -191,14 +200,11 @@ class _AmountCardState extends State<AmountCard>
                                       ),
                                     ),
                                   )
-                                : TweenAnimationBuilder<double>(
-                                    duration: const Duration(milliseconds: 800),
-                                    curve: Curves.easeOutCubic,
-                                    tween: Tween(
-                                        begin: 0.0, end: widget.amountCredit),
-                                    builder: (context, value, child) {
+                                : AnimatedBuilder(
+                                    animation: _counterAnimationController,
+                                    builder: (context, child) {
                                       return Text(
-                                        formatCurrency(value),
+                                        formatCurrency(_counterAnimation.value),
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 36,
